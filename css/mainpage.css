@@ -1,0 +1,136 @@
+ body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display:flex;
+    flex-direction: column;
+}
+#header{
+    position: fixed;
+    display: flex;
+    width:100%;
+    height:60px;
+    background: linear-gradient(135deg, 
+    #f9f9fb, #cef1f3, #f191bc,#cef1f3, #f9f9fb);
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px; /* Add padding for spacing on the sides */
+    box-sizing: border-box;
+}
+.inheader {
+    display: flex;
+    gap: 10px; /* Add spacing between button and select menu */
+    align-items: center;
+}
+
+button {
+    padding: 4px 8px;
+}
+
+#menuselect {
+    padding: 4px 8px;
+}
+#main-section{
+    height:95vh;
+    width:100%;
+    margin-top: 60px;
+    background: linear-gradient(135deg, 
+    #f9f9fb, #cef1f3, #f191bc,#cef1f3, #f9f9fb);
+    align-items: center;
+    
+}
+
+.main-quotes p#inmain  {
+    margin:0; /* Removes all default margins */
+    font-size: 15vh;
+    font-weight: bolder;
+    line-height: 1; /* Ensures minimal line spacing */
+}
+
+/* Add a small margin-top to the second paragraph if needed */
+.main-quotes p#inmain + p#inmain {
+    margin-left: 0px;
+    margin-top: 5px; /* Adjust this value as desired */
+    margin-bottom: 15vh;
+}
+.inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between each item */
+    padding: 10px;
+    border: 2px solid #ccc; /* Border */
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    border-radius: 8px; /* Rounded corners */
+    justify-content: center;
+}
+
+.inputs select,
+.inputs input,
+.inputs button {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 1rem;
+}
+
+.inputs button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.inputs button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+.appointment-count{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 35px;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.appointment-count p#count{
+    font-weight: bold;
+}
+#download-section{
+    margin:0;
+    padding:60px;
+    display:flex;
+    justify-content: space-between;
+    width:(100%-60px); 
+    height:75vh;
+    background-color: azure;
+}
+.appdownload h2 {
+    font-size: 8rem; /* Increase as needed */
+    font-weight: bold; /* Makes text bold */
+    margin: 0; /* Removes default margins */
+    margin-bottom: 3px; /* Adjust to control space between headings */
+}
+
+.appdownload p#indownload {
+    font-size: 2.5rem; /* Increase as needed */
+    font-weight: bold; /* Makes text bold */
+}
+#downloadapp {
+    width: 500px; /* Specific width */
+    height: 600px; /* Specific height */
+}
+#review-section{
+    margin:0;
+    padding:60px;
+    display:flex;
+    flex-direction: column;
+    width:(100%-60px); 
+    height:75vh;
+    background-color: azure;
+}
+#reviewsheading{
+    font-size: 2.5rem; /* Increase as needed */
+    font-weight: bold; /* Makes text bold */
+}
+#loginname h3{
+    color:black
+}

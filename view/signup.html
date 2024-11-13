@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>loginpage</title>
+    <link rel="stylesheet" href="/loginpage.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+</head>
+<body>
+    <div class="mainbox">
+        <div class="signupinputs">
+            <label for="name">Name:</label>
+            <input type="text" name="name" id="name" required>
+            <label for="mail">Mail:</label>
+            <input type="email" name="mail" id="mail" required>
+            <label for="phnumber">phnumber:</label>
+            <input type="tel" name="phnumber" id="phnumber" required>
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" required>
+            <button type="submit" id="signup">Submit</button>
+        </div>
+       
+    </div>
+</body>
+<script>
+    document.getElementById("signup").addEventListener('click',async()=>{
+        const name=document.getElementById("name").value;
+        const mail=document.getElementById("mail").value;
+        const phnumber=document.getElementById("phnumber").value;
+        const password=document.getElementById("password").value;
+        try{
+           const logincredentials=await axios.post('http://localhost:3000/charmy/createuser',{name,mail,phnumber,password} ,{ withCredentials: true });
+           console.log(logincredentials.data);
+           if(logincredentials.data.redirect==true){
+            alert(" User has been registerd ");
+            window.location.href=logincredentials.data.url;
+           }
+        }catch(err){
+            console.log("in signuppage frontend",err)
+        }
+    })
+</script>
+</html>

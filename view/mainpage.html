@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>charmy</title>
+    <link rel="stylesheet" href="/mainpage.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <header id="header">
+        <h1>Charmy</h1>
+        <div class="inheader">
+            <div id="loginname"></div>
+            <button>For business</button>
+            <div class="menu-container">
+                <select id="menuselect">
+                    <option value="">Menu</option>
+                    <option value="login">Login</option>
+                    <option value="getapp">Get the app</option>
+                    <option value="language">Language</option>
+                    <option value="forbusiness">Charmy for business</option>
+                </select>
+            </div>
+        </div>
+    </header>
+    <section id="main-section">
+        <div class="main-quotes">
+            <p id="inmain">Be a charming person</p>
+            <p id="inmain">with charmy</p>
+        </div>
+        <div class="inputs">
+            <div class="services">
+                <select id="service">
+                    <option value="">All treatments</option>
+                    <option value="Hairdressing">Hairdressing</option>
+                    <option value="Nails">Nails</option>
+                    <option value="Eyebrows & eyelashes">Eyebrows & eyelashes</option>
+                    <option value="Massage">Massage</option>
+                    <option value="Hair removal">Hair removal</option>
+                    <option value="Tattoo & piercing">Tattoo & piercing</option>
+                </select>
+            </div>
+            <input type="text" id="location" placeholder="venue">
+            <input type="date" id="date" placeholder="any date">
+            <input type="time" id="time" placeholder=" any time">
+            <button type="submit" id="inputsubmission">Submit</button>
+        </div>
+        <div class="appointment-count">
+            <p id="appointmentcount"><span id="count">0</span> appointments booked today</p>
+        </div>
+
+    </section>
+    <section id="download-section">
+        <div class="appdownload">
+            <h2>Download the</h2>
+            <h2>charmy app</h2>
+            <p id="indownload">Get the charmy app</p>
+            <p id="indownload">to find your local stylists</p>
+        </div>
+        <img id="downloadapp"
+            src="https://www.codefencers.com/libraries/CodeFencers/images/work/saloonisto/main-img.png"
+            alt="download alt image">
+    </section>
+    <section id="review-section">
+        <h1 id="reviewsheading">Reviews</h1>
+        <ul id="reviewlist"></ul>
+        <input type="text" id="reviewbox" placeholder="enter review" />
+    </section>
+</body>
+<script>
+    const socket = io.connect('http://localhost:3000'); // Connect to Socket.IO server
+
+    // Listen for appointment count and details updates
+    socket.on('appointmentDataUpdate', (data) => {
+        const { appointmentCount, appointmentDetails } = data;
+        console.log(appointmentDetails)
+        // Update count display
+        document.getElementById('count').innerText = appointmentCount;
+
+
+    });
+
+
+    //to check whether its logined
+    const urlParams = new URLSearchParams(window.location.search);
+    const islogin = urlParams.get('islogin');
+    const login_name = urlParams.get('loginname');
+    //console.log(islogin,login_name);
+    if (islogin === 'true') {
+        document.getElementById("loginname").innerHTML = `<h3>${login_name}</h3>`
+
+
+    }
+
+    //if the menu is changed to login
+    document.getElementById("menuselect").addEventListener('change', (event) => {
+        if (event.target.value == "login") {
+            window.location.href = 'http://localhost:3000/charmy/charmy_loginpage'
+        }
+    })
+
+    //to get the inputs for tratment
+    document.getElementById("inputsubmission").addEventListener('click', async () => {
+        const servicename = document.getElementById("service").value;
+        const venuename = document.getElementById("location").value;
+        const date = document.getElementById("date").value;
+        const time = document.getElementById("time").value;
+        console.log(servicename, venuename, date, time);
+        try {
+            window.location.href = `http://localhost:3000/charmy/charmy_shopspage?servicename=${servicename}&venuename=${venuename}`;
+        } catch (err) {
+            console.log("while getting service inputs", err);
+        }
+    })
+
+</script>
+
+</html>

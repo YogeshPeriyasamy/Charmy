@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>view shops</title>
+    <link rel="stylesheet" href="/shopspage.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+</head>
+
+<body>
+    <header id="header">
+        <h1>Charmy</h1>
+    </header>
+    <div id="viewshops">
+        <ul id="shopslist"></ul>
+    </div>
+    <div class="service">
+        <ul id="servicelist"></ul>
+    </div>
+    <div id="workers">
+        <ul id="workerslist"></ul>
+    </div>
+</body>
+<script>
+    window.onload = () => {
+        getshops()
+    }
+    const urlParams = new URLSearchParams(window.location.search);
+    const sevice = urlParams.get('servicename');
+    const venue = urlParams.get('venuename');
+
+    //function to get the shops
+    // Function to get the shops
+async function getshops() {
+    const shopresponse = await axios.post('http://localhost:3000/charmy/getshops', { sevice, venue }, { withCredentials: true });
+    const allshops = shopresponse.data;
+    const shopcontainer = document.getElementById("shopslist");
+    shopcontainer.innerHTML = "";
+
+    for (const shop of allshops) {
+        const shopdiv = document.createElement('div');
+        shopdiv.className = 'shop-item';
+
+        const imgele = document.createElement('img');
+        imgele.src = shop.shopimage;
+        imgele.className = 'shop-image';
+
+        const nameElement = document.createElement('h2');
+        nameElement.textContent = shop.name;
+        nameElement.className = 'shop-name';
+
+        const locationElement = document.createElement('p');
+        locationElement.textContent = shop.location;
+        locationElement.className = 'shop-location';
+
+        const contactelement = document.createElement('p');
+        contactelement.className = 'shop-contact';
+        contactelement.textContent = shop.contact;
+
+        shopdiv.appendChild(imgele);
+        shopdiv.appendChild(nameElement);
+        shopdiv.appendChild(locationElement);
+        shopdiv.appendChild(contactelement);
+        shopcontainer.appendChild(shopdiv);
+
+        // Add a shop clicking function
+        shopdiv.addEventListener('click', async () => {
+            try {
+                const allservice_workers = await axios.get(`http://localhost:3000/charmy/getshopsservice_workers?shopid=${shop.id}`, { withCredentials: true });
+                const allservices = allservice_workers.data.allservices;
+                const allworkers = allservice_workers.data.allworkers;
+
+                const servicecontainer = document.getElementById("servicelist");
+                servicecontainer.innerHTML = "";
+                const workerscontainer = document.getElementById("workerslist");
+                workerscontainer.innerHTML = "";
+
+                // Step 1: Display services
+                for (const service of allservices) {
+                    const servicediv = document.createElement('div');
+                    servicediv.className = 'shop-item';
+
+                    const nameElement = document.createElement('h2');
+                    nameElement.textContent = service.name;
+                    nameElement.className = 'shop-name';
+
+                    const priceElement = document.createElement('p');
+                    priceElement.textContent = `Price: $${service.price}`;
+                    priceElement.className = 'shop-location';
+
+                    const durationElement = document.createElement('p');
+                    durationElement.className = 'shop-contact';
+                    durationElement.textContent = `Duration: ${service.duration} mins`;
+
+                    servicediv.appendChild(nameElement);
+                    servicediv.appendChild(priceElement);
+                    servicediv.appendChild(durationElement);
+                    servicecontainer.appendChild(servicediv);
+
+                    // Add event listener for selecting a service
+                    servicediv.addEventListener('click', () => {
+                        // Store selected service info
+                        const selectedService = { id: service.service_id, name: service.name, price: service.price };
+
+                        // Step 2: Display workers for selected service
+                        workerscontainer.innerHTML = "";
+                        for (const worker of allworkers) {
+                            const workerdiv = document.createElement('div');
+                            workerdiv.className = 'shop-item';
+
+                            const workerImg = document.createElement('img');
+                            workerImg.src = worker.workerimage;
+                            workerImg.className = 'shop-image';
+
+                            const workerName = document.createElement('h2');
+                            workerName.textContent = worker.name;
+                            workerName.className = 'shop-name';
+
+                            const specialityElement = document.createElement('p');
+                            specialityElement.textContent = `Speciality: ${worker.specialty}`;
+                            specialityElement.className = 'shop-location';
+
+                            workerdiv.appendChild(workerImg);
+                            workerdiv.appendChild(workerName);
+                            workerdiv.appendChild(specialityElement);
+                            workerscontainer.appendChild(workerdiv);
+
+                            // Add event listener for selecting a worker
+                            workerdiv.addEventListener('click', () => {
+                                // Store selected worker info
+                                const selectedWorker = { id: worker.worker_id, name: worker.name,speciality:worker.speciality,workering:worker.workerimage  };
+
+                                // Step 3: Confirm appointment
+                                const confirmButton = document.createElement('button');
+                                confirmButton.textContent = 'Confirm Appointment';
+                                confirmButton.className = 'confirm-btn';
+                                workerscontainer.appendChild(confirmButton);
+
+                                confirmButton.addEventListener('click', async () => {
+                                    try {
+                                         
+                                          const shopId= shop.id;
+                                          const shopname=shop.name;
+                                          const serviceId= selectedService.id;
+                                          const workerId= selectedWorker.id;
+                                    // to send mail to the user upon booking
+                                        const resu=await axios.post('http://localhost:3000/charmy/confirmAppointment', {shopId,serviceId,workerId,shopname}, { withCredentials: true });
+                                       
+                                        alert(resu.data.message);
+                                        window.location.href=resu.data.url;
+
+                                    } catch (error) {
+                                        console.log("Error while confirming appointment:", error);
+                                        alert("Failed to confirm appointment. Please try again.");
+                                    }
+                                });
+                            });
+                        }
+                    });
+                }
+            } catch (err) {
+                console.log("Error while retrieving shop services and workers:", err);
+            }
+        });
+    }
+}
+
+</script>
+
+</html>

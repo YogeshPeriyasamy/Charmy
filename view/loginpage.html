@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>loginpage</title>
+    <link rel="stylesheet" href="/loginpage.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+</head>
+<body>
+    <div class="mainbox">
+        <div class="signupinputs">
+            <label for="mail">Mail:</label>
+            <input type="email" name="mail" id="mail" required>
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" required>
+            <button type="submit" id="loginsubmit">Submit</button>
+        </div>
+        <div class="newuser">
+            <a href="http://localhost:3000/charmy/regnewuser">new user?</a>
+        </div>
+    </div>
+</body>
+<script>
+    document.getElementById("loginsubmit").addEventListener('click',async()=>{
+        
+        const mail=document.getElementById("mail").value;
+        const password=document.getElementById("password").value;
+        try{
+           const logincredentials=await axios.post('http://localhost:3000/charmy/enterlogin',{mail,password} ,{ withCredentials: true })
+           window.location.href=logincredentials.data.url;
+        }catch(err){
+            console.log("in loginpage frontend",err)
+        }
+    })
+</script>
+</html>

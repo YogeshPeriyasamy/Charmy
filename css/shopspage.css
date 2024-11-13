@@ -1,0 +1,84 @@
+/* General styling */
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, 
+    #9a9aeb, #cef1f3, #eef0f0, #cef1f3, #f9f9fb);
+    margin: 0;
+    padding: 0;
+}
+
+#header{
+    position: fixed;
+    display: flex;
+    width:100%;
+    height:60px;
+    background: linear-gradient(135deg, 
+    #f9f9fb, #cef1f3, #f191bc,#cef1f3, #f9f9fb);
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px; /* Add padding for spacing on the sides */
+    box-sizing: border-box;
+}
+
+/* Main container styling */
+#viewshops {
+    padding: 20px;
+}
+
+/* Shops list container */
+#shopslist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    list-style: none;
+    padding: 0;
+    justify-content: center;
+}
+
+/* Styling for each shop card */
+.shop-item {
+    width: 30%; /* Adjusts to fit exactly 3 items in a row */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+    box-sizing: border-box;
+}
+
+.shop-item:hover {
+    transform: translateY(-5px);
+}
+
+/* Fixed size for shop images */
+.shop-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+/* Shop name styling */
+.shop-name {
+    font-size: 1.2em;
+    font-weight: bold;
+    margin: 10px 0;
+    color: #333;
+}
+
+/* Shop location and contact styling */
+.shop-location, .shop-contact {
+    font-size: 0.9em;
+    color: #666;
+    margin: 5px 0;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    .shop-item {
+        width: 100%; /* Full-width items on smaller screens */
+    }
+}
