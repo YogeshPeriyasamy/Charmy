@@ -5,6 +5,7 @@ const servicedb=require('../model/services');
 const workersdb=require('../model/workers');
 const appointmentdb=require('../model/appointments');
 const axios=require("axios");
+const Razorpay=require("razorpay");
 // to enter main page
 exports.mainpage=(req,res)=>{
     res.sendFile(path.join(__dirname,'../view/mainpage.html'));
@@ -51,17 +52,22 @@ exports.shopsservice_workers=async(req,res)=>{
 // to enter appointment details
 
 exports.confirmappointment=async(req,res)=>{
-    const{shopId,serviceId,workerId,shopname}=req.body;
+    const{shopId,serviceId,workerId,shopname,serviceprice}=req.body;
     try{
         const user=await userdb.findByPk(req.session.userId);
-        await appointmentdb.create({
-            user_id:req.session.userId,
-            shop_id:shopId,
-            service_id:serviceId,
-            worker_id:workerId,
-            status:"pending",
+        
+        //to open razor pay
+        const instance=new Razorpay({
+            key_id:'rzp_test_PL7AOFdQmx9dUn',
+            key_secret:'4Wf3zXsJxZ2C4Th7PvH9ruLV',
         })
-        console.log("appointment datum entered");
+        const option={
+            amount:(serviceprice*100),
+            currency:"INR",
+        }
+        const razorpay_order=await instance.orders.create(option);
+        console.log("razorpay order",razorpay_order);
+       
         // to send mail upon booking appointment
         const confirmmail=await axios.post(
             'https://api.sendinblue.com/v3/smtp/email',
@@ -79,11 +85,52 @@ exports.confirmappointment=async(req,res)=>{
             {
                 headers:{
                     'Content-Type':'application/json',
-                    'api-key':'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'
+                    'api-key':'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',
                 }
             }
         )
-        res.json({message:"appointment confirmed",url:`http://localhost:3000/charmy/charmy_mainpage?islogin=true&loginname=${user.name}`});
+
+
+
+//         const SibApiV3Sdk = require('@sendinblue/client');
+// const client = new SibApiV3Sdk.TransactionalEmailsApi();
+// client.setApiKey(SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey, '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');
+// console.log("user.mail",user.mail);
+// const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail({
+//     sender: { email:"yogeshsri1209@gmail.com", name: shopname },
+//     to: [{ email: user.mail, name: user.name }],
+//     subject: "Appointment confirmed",
+//     htmlContent: `
+//               <body>
+//                    <h1>Appoitment booked</h1>
+//                    <p>Hi ${user.name} we are happy that you had booked your appoitment with us</p>
+//               </body>
+//               `,
+// });
+
+// await client.sendTransacEmail(sendSmtpEmail)
+//     .then(data => console.log('Email sent:', data))
+//     .catch(error => console.error('Error:', error));
+
+        await appointmentdb.create({
+            user_id:req.session.userId,
+            shop_id:shopId,
+            service_id:serviceId,
+            worker_id:workerId,
+            status:"pending",
+        })
+        console.log("appointment datum entered");
+
+        res.json({
+            message:"appointment confirmed",
+            url:`http://localhost:3000/charmy/charmy_mainpage?islogin=true&loginname=${user.name}`,
+            order:razorpay_order,
+            prefill:{
+                username:user.name,
+                shopname:shopname,
+            },
+            key:'rzp_test_PL7AOFdQmx9dUn',
+        });
     }catch(err){
         console.log("while confirming appointments in be",err)
     }

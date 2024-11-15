@@ -7,6 +7,7 @@
     <title>view shops</title>
     <link rel="stylesheet" href="/shopspage.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 
 <body>
@@ -134,7 +135,7 @@ async function getshops() {
 
                                 // Step 3: Confirm appointment
                                 const confirmButton = document.createElement('button');
-                                confirmButton.textContent = 'Confirm Appointment';
+                                confirmButton.textContent = 'Pay and book';
                                 confirmButton.className = 'confirm-btn';
                                 workerscontainer.appendChild(confirmButton);
 
@@ -145,11 +146,31 @@ async function getshops() {
                                           const shopname=shop.name;
                                           const serviceId= selectedService.id;
                                           const workerId= selectedWorker.id;
+                                          const serviceprice=selectedService.price;
                                     // to send mail to the user upon booking
-                                        const resu=await axios.post('http://localhost:3000/charmy/confirmAppointment', {shopId,serviceId,workerId,shopname}, { withCredentials: true });
+                                        const resu=await axios.post('http://localhost:3000/charmy/confirmAppointment', {shopId,serviceId,workerId,shopname,serviceprice}, { withCredentials: true });
+                                        // to open razorpay box in front end
+                                        const option={
+                                            key:resu.data.key,
+                                            amount:resu.data.order.amount,
+                                            currency:resu.data.order.currency,
+                                            order_id:resu.data.order.id,
+                                            name:shopname,
+                                            description:'appointment confirmed',
+                                            handler:function(res){
+                                                console.log("appointment confirmed",res);
+                                                alert(resu.data.message);
+                                                window.location.href=resu.data.url;
+                                            },
+                                            theme:{
+                                                color:'#0000FF',
+                                            },
+                                            prefill:resu.data.prefill
+                                        }
+                                        const razorpay_checkout=new Razorpay(option);
+                                        await razorpay_checkout.open();
+
                                        
-                                        alert(resu.data.message);
-                                        window.location.href=resu.data.url;
 
                                     } catch (error) {
                                         console.log("Error while confirming appointment:", error);
