@@ -1,14 +1,14 @@
-const express=require("express");
-const cors=require('cors');
-const session=require("express-session")
-const path=require("path");
+const express = require("express");
+const cors = require('cors');
+const session = require("express-session")
+const path = require("path");
 // const helmet=require('helmet');
- const compression=require('compression');
-const app=express();
-const http=require("http");
-const{Server}=require('socket.io');
-const server=http.createServer(app);
-const io=new Server(server, {
+const compression = require('compression');
+const app = express();
+const http = require("http");
+const { Server } = require('socket.io');
+const server = http.createServer(app);
+const io = new Server(server, {
     cors: {
         origin: "*",
         methods: ["GET", "POST"],
@@ -20,27 +20,27 @@ const io=new Server(server, {
 
 //middlewares
 app.use(session({
-    secret:"loginkey",
-    resave:false,
-    saveUninitialized:false,
-    cookie:{
-        secure:false,
-        httpOnly:true,
-        sameSite:"lax",
+    secret: "loginkey",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false,
+        httpOnly: true,
+        sameSite: "lax",
     }
 }))
-app.use(express.urlencoded({extended:false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 //in network tab requst there will be access allow origin control with it there is options as well its send by browser for special request like post 
 //put delete metods it sends option first like asking permission before the actual request its called preflight requeset
 app.use(cors({
-    origin:"*",
+    origin: "*",
     // method:["GET","POST"], which method should be allowed from other origin//
-    credentails:true,
+    credentails: true,
 }));
 
 //to provide css for the boooking page set the route
-app.use(express.static(path.join(__dirname,'css')));
+app.use(express.static(path.join(__dirname, 'css')));
 
 //middelware to add security headers
 //app.use(helmet({ contentSecurityPolicy: false }));
@@ -50,16 +50,16 @@ app.use(compression());
 //middle are to config .env
 //require('dotenv').config({path:('./util/.env')});
 //router 
-const router=require('./routes/path');
-app.use("/charmy",router);
+const router = require('./routes/path');
+app.use("/charmy", router);
 
 //database
-const sequelize=require('./util/database');
-const User=require('./model/user');
-const Appointment=require('./model/appointments');
-const Shop=require('./model/shops');
-const Service=require('./model/services');
-const Worker=require('./model/workers');
+const sequelize = require('./util/database');
+const User = require('./model/user');
+const Appointment = require('./model/appointments');
+const Shop = require('./model/shops');
+const Service = require('./model/services');
+const Worker = require('./model/workers');
 
 
 
@@ -68,8 +68,8 @@ const Worker=require('./model/workers');
 // Function to get the count and details of appointments
 async function fetchAppointmentData() {
     const appointmentCount = await Appointment.count(); // Get the total count of appointments
-  
-  
+
+
     return { appointmentCount };
 }
 
@@ -117,7 +117,7 @@ Appointment.belongsTo(Worker, { foreignKey: 'worker_id' });
 (async () => {
     try {
         await sequelize.sync();
-        server.listen(3000, '0.0.0.0',() => {
+        server.listen(3000, '0.0.0.0', () => {
             console.log("Database synced and server is running on port 3000");
         });
     } catch (err) {

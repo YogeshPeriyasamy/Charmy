@@ -6,6 +6,8 @@ const workersdb=require('../model/workers');
 const appointmentdb=require('../model/appointments');
 const axios=require("axios");
 const Razorpay=require("razorpay");
+
+require('dotenv').config({path:'./util/.env'});
 // to enter main page
 exports.mainpage=(req,res)=>{
     res.sendFile(path.join(__dirname,'../view/mainpage.html'));
@@ -58,8 +60,8 @@ exports.confirmappointment=async(req,res)=>{
         
         //to open razor pay
         const instance=new Razorpay({
-            key_id:'rzp_test_PL7AOFdQmx9dUn',
-            key_secret:'4Wf3zXsJxZ2C4Th7PvH9ruLV',
+            key_id:process.env.Razorpay_key,
+            key_secret:process.env.Razorpay_secret,
         })
         const option={
             amount:(serviceprice*100),
@@ -72,7 +74,7 @@ exports.confirmappointment=async(req,res)=>{
         const confirmmail=await axios.post(
             'https://api.sendinblue.com/v3/smtp/email',
             {
-              sender:{email:"yogeshsri1209@gmail.com", name:shopname},
+              sender:{email:process.env.mail, name:shopname},
               to:[{email:user.mail}],
               subject:"Appointment confirmed",
               htmlContent:`
@@ -85,32 +87,11 @@ exports.confirmappointment=async(req,res)=>{
             {
                 headers:{
                     'Content-Type':'application/json',
-                    'api-key':'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',
+                    'api-key':process.env.BrevoKey,
                 }
             }
         )
 
-
-
-//         const SibApiV3Sdk = require('@sendinblue/client');
-// const client = new SibApiV3Sdk.TransactionalEmailsApi();
-// client.setApiKey(SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey, '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');
-// console.log("user.mail",user.mail);
-// const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail({
-//     sender: { email:"yogeshsri1209@gmail.com", name: shopname },
-//     to: [{ email: user.mail, name: user.name }],
-//     subject: "Appointment confirmed",
-//     htmlContent: `
-//               <body>
-//                    <h1>Appoitment booked</h1>
-//                    <p>Hi ${user.name} we are happy that you had booked your appoitment with us</p>
-//               </body>
-//               `,
-// });
-
-// await client.sendTransacEmail(sendSmtpEmail)
-//     .then(data => console.log('Email sent:', data))
-//     .catch(error => console.error('Error:', error));
 
         await appointmentdb.create({
             user_id:req.session.userId,
@@ -129,7 +110,7 @@ exports.confirmappointment=async(req,res)=>{
                 username:user.name,
                 shopname:shopname,
             },
-            key:'rzp_test_PL7AOFdQmx9dUn',
+            key:process.env.Razorpay_key,
         });
     }catch(err){
         console.log("while confirming appointments in be",err)
